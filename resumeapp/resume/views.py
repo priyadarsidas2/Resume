@@ -55,13 +55,3 @@ def create_post():
         sendEmail(emailid, fileName.filename, htmlPage)
         return htmlPage
     return render_template('index.html',form=form)
-
-
-'''
-Skills matched – Points achieved
-Skills not matched – Points lost
-Experience in years required –
-Experience in years available as per resume –
-Total Score – Achieved / Total
-Score percentage – %
-'''
