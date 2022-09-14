@@ -1,0 +1,4 @@
+puntk
+stopwords
+omw-1.4
+wordnet
