@@ -1,15 +1,15 @@
 import pandas as pd
 import numpy as np
 import nltk
-nltk.download('punkt')
+#nltk.download('punkt')
 from nltk.tokenize import word_tokenize
 import time
 from googlesearch import search
 from newspaper import Article
 import random
 from nltk.corpus import stopwords
-nltk.download('stopwords')
-nltk.download('omw-1.4')
+#nltk.download('stopwords')
+#nltk.download('omw-1.4')
 stop_words = stopwords.words('english')
 stopset = set(nltk.corpus.stopwords.words('english'))
 import string
@@ -17,7 +17,7 @@ punct = string.punctuation
 #lemmatization
 from nltk.stem import WordNetLemmatizer
 wordnet_lemmatizer = WordNetLemmatizer()
-nltk.download('wordnet')
+#nltk.download('wordnet')
 from datetime import datetime
 
 def scoringAndExperienceCheck(primarySkill, secondarySkill, extractedText):
