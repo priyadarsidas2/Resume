@@ -1,15 +1,15 @@
 import pandas as pd
 import numpy as np
 import nltk
-#nltk.download('punkt')
+nltk.download('punkt')
 from nltk.tokenize import word_tokenize
 import time
 from googlesearch import search
 from newspaper import Article
 import random
 from nltk.corpus import stopwords
-#nltk.download('stopwords')
-#nltk.download('omw-1.4')
+nltk.download('stopwords')
+nltk.download('omw-1.4')
 stop_words = stopwords.words('english')
 stopset = set(nltk.corpus.stopwords.words('english'))
 import string
@@ -17,7 +17,7 @@ punct = string.punctuation
 #lemmatization
 from nltk.stem import WordNetLemmatizer
 wordnet_lemmatizer = WordNetLemmatizer()
-#nltk.download('wordnet')
+nltk.download('wordnet')
 from datetime import datetime
 
 def scoringAndExperienceCheck(primarySkill, secondarySkill, extractedText):
@@ -63,14 +63,29 @@ def scoringAndExperienceCheck(primarySkill, secondarySkill, extractedText):
     experienceRange = []
     months = []
     years = []
+
     for i in extractedText.split("\n"):
         for j in monthNames:
             if j in i and "-" in i:
-                experienceRange.append(i.split(" - ")[0])
-                experienceRange.append(i.split(" - ")[1])
-            if j in i and "—" in i:
-                experienceRange.append(i.split(" — ")[0])
-                experienceRange.append(i.split(" — ")[1])
+                try:
+                    firstPart = i.split(" - ")[0].replace(" ", "").isalpha() == False
+                    secondPart = i.split(" - ")[1].replace(" ", "").isalpha() == False
+                    if firstPart and secondPart:
+                        experienceRange.append(i.split(" - ")[0])
+                        experienceRange.append(i.split(" - ")[1])
+                    break
+                except:
+                    pass
+            elif j in i and "—" in i and i.split(" — ")[0].isalpha() == False and i.split(" — ")[1].isalpha() == False:
+                try:
+                    firstPart = i.split(" — ")[0].replace(" ", "").isalpha() == False
+                    secondPart = i.split(" — ")[1].replace(" ", "").isalpha() == False
+                    if firstPart and secondPart:
+                        experienceRange.append(i.split(" — ")[0])
+                        experienceRange.append(i.split(" — ")[1])
+                    break
+                except:
+                    pass
 
     lastExperienceMonthYear = experienceRange[1]
     firstExperienceMonthYear = experienceRange[-2]
@@ -82,7 +97,7 @@ def scoringAndExperienceCheck(primarySkill, secondarySkill, extractedText):
         lastMonth = monthsToNum[lastExperienceMonthYear.split(" ")[0]]
         lastYear = lastExperienceMonthYear.split(" ")[1]
     firstMonth = monthsToNum[firstExperienceMonthYear.split(" ")[0]]
-    firstYear = int(firstExperienceMonthYear.split(" ")[1])
-    experienceInYears = (((lastYear - firstYear) * 12) + abs(lastMonth - firstMonth))/12
+    firstYear = firstExperienceMonthYear.split(" ")[1]
+    experienceInYears = (((int(lastYear) - int(firstYear)) * 12) + abs(int(lastMonth) - int(firstMonth)))/12
 
     return matchPercent, skillsFound, skillsNotFound, experienceInYears, pointsAchieved, pointsLost
