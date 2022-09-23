@@ -53,6 +53,6 @@ def create_post():
                                 emailid = emailid
                                 )
         sendEmail(emailid, fileName.filename, htmlPage)
-        deleteOutputFiles()      
+        #deleteOutputFiles()
         return htmlPage
     return render_template('index.html',form=form)
