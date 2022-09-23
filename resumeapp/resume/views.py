@@ -2,9 +2,10 @@ import os
 from flask import Flask, flash, request, redirect, url_for
 from resumeapp.resume.forms import ResumeForm
 from flask import Blueprint, render_template
-from resumeapp.resume.readpdf import readpdffile
-from resumeapp.resume.scoring import scoringAndExperienceCheck
+from resumeapp.resume.readpdf import extractTextFromPDF
+from resumeapp.resume.scoring import scoringAndExperienceCheck, findSubtextForExperienceSearch, cleanExperienceRange
 from resumeapp.resume.email import sendEmail
+from resumeapp.resume.cleanoutput import deleteOutputFiles
 
 resume = Blueprint('resume',__name__)
 
@@ -14,13 +15,12 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@resume.route('/index')
-def index():
-    form = ResumeForm()
-    return render_template('index.html', form = form)
+#@resume.route('/')
+#def index():
+#    form = ResumeForm()
+#    return render_template('index.html', form = form)
 
-
-@resume.route('/index', methods=['GET','POST'])
+@resume.route('/', methods=['GET','POST'])
 def create_post():
     form = ResumeForm()
 
@@ -32,7 +32,7 @@ def create_post():
         emailid = form.emailid.data
         fileName = form.fileName.data
         fileName.save(fileName.filename)
-        extractedText = readpdffile(fileName.filename)
+        extractedText = extractTextFromPDF(fileName.filename)
         matchPercent, skillsFound, skillsNotFound, experienceInYears, pointsAchieved, pointsLost = scoringAndExperienceCheck(
                                                                             primarySkill, secondarySkill, extractedText)
         experienceInYears = round(experienceInYears, 2)
@@ -53,5 +53,6 @@ def create_post():
                                 emailid = emailid
                                 )
         sendEmail(emailid, fileName.filename, htmlPage)
+        deleteOutputFiles()      
         return htmlPage
     return render_template('index.html',form=form)

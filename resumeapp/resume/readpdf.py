@@ -1,17 +1,24 @@
-import PyPDF2
+import aspose.words as aw
+import random
 
-def readpdffile(fileName):
-    pdfFileObj = open(fileName, 'rb')
-    # creating a pdf reader object
-    pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-    # printing number of pages in pdf file
-    print(pdfReader.numPages)
+def extractTextFromPDF(filename):
+    # Load the PDF document from the disc.
+    doc = aw.Document(filename)
 
-    extractedText = ''
-    for i in range(pdfReader.numPages):
-        # creating a page object
-        pageObj = pdfReader.getPage(i)
-        # extracting text from page
-        localText = pageObj.extractText()
-        extractedText += localText
+    # Save the document to HTML format.
+    fileNameToSave = "output/" + "filename" + str(random.randint(0,10000)) + ".html"
+    doc.save(fileNameToSave)
+    doc = aw.Document(fileNameToSave)
+    from bs4 import BeautifulSoup
+
+    with open(fileNameToSave, encoding="utf8") as f:
+        #read File
+        content = f.read()
+        #parse HTML
+        soup = BeautifulSoup(content, 'html.parser')
+
+    extractedText = ""
+    for i in soup.find_all('p'):
+        extractedText += "\n" + i.get_text()
+
     return extractedText
